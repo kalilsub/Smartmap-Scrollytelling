@@ -199,6 +199,7 @@
   svelte-scroller-foreground {
     display: block;
     position: relative;
+    width: 50%;
   }
 
   svelte-scroller-foreground::after {

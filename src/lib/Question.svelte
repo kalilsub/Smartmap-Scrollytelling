@@ -1,6 +1,7 @@
 <script>
   export let question
   export let number
+  export let step
 
   let selectedAnswer
 
@@ -26,13 +27,13 @@
       <!-- svelte-ignore a11y-click-events-have-key-events -->
 
       <button
-        class="ml-1 w-20 cursor-pointer px-2 py-2
+        class="ml-1 min-h-16 w-20 cursor-pointer px-2 py-2
           {selectedAnswer === answer.value ? 'bg-stone-400' : 'bg-stone-700'}
           {index === 0 ? 'rounded-l-xl' : ''}
         {index === answers.length - 1 ? 'rounded-r-xl' : ''}"
         on:click={() => selectAnswer(answer.value)}
       >
-        {answer.label}
+        {step === 1 ? answer.value : answer.label}
       </button>
     {/each}
   </div>

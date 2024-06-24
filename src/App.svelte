@@ -28,38 +28,29 @@
 
   <Scroller {top} {bottom} {threshold} bind:index bind:offset bind:progress>
     <div slot="background">
-      <!-- <p></p>
-
-      <p>Section {index + 1} is currently active.</p> -->
-      {#if index === 0 && offset > 0}
-        <div
-          in:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 0 }}
-          out:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 600 }}
-        >
-          <Question number={1} question="Do you like Svelte?" />
+      {#if index >= 0 && offset > 0}
+        <div in:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 0 }} out:fade>
+          <Question number={1} question="Do you like Svelte?" step={index} />
         </div>
-        <div
-          in:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 300 }}
-          out:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 300 }}
-        >
-          <Question number={2} question="Do you like Tailwind CSS?" />
+        <div in:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 100 }} out:fade>
+          <Question number={2} question="Do you like Tailwind CSS?" step={index} />
         </div>
-        <div
-          in:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 600 }}
-          out:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 0 }}
-        >
-          <Question number={3} question="Do you like Snowpack?" />
+        <div in:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 200 }} out:fade>
+          <Question number={3} question="Do you like Snowpack?" step={index} />
         </div>
       {/if}
     </div>
 
-    <div slot="foreground" style="padding: 0 50% 0 0 ;">
+    <div slot="foreground">
       <section>
         <p class="flex border">
           First a candidate will be asked to fill a questionnaire with some political questions.
         </p>
       </section>
-      <section>This is the second section.</section>
+      <section>
+        Each answer corresponds to a particular value - the candidate's answer for each question is
+        collected
+      </section>
       <section>This is the third section.</section>
     </div>
   </Scroller>
@@ -79,8 +70,8 @@
 </main>
 
 <style>
-  [slot="background"] p {
-    margin: 0;
+  [slot="background"] {
+    pointer-events: all;
   }
 
   [slot="foreground"] {
