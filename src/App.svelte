@@ -3,8 +3,12 @@
   import Hero from "./lib/Hero.svelte"
   import Question from "./lib/Question.svelte"
   import DraggableLabel from "./lib/DraggableLabel.svelte"
+  import Scatterplot from "./lib/Scatterplot.svelte"
+  // @ts-ignore
+  import data from "./data/combined_0.csv"
 
   import { fade, fly } from "svelte/transition"
+  import { processData } from "./utils/process"
 
   import Scroller from "./lib/Scroller.svelte"
   let count
@@ -15,9 +19,14 @@
   let threshold = 0.5
   let bottom = 0.9
 
+  processData(data)
+
   const questions = ["Do you like Svelte?", "Do you like Tailwind CSS?", "Do you like Snowpack?"]
 
-  $: console.log(index)
+  $: firstSectionInView = index === 0 && offset > 0
+  $: secondSectionInView = index >= 1 && offset > 0
+
+  $: console.log(data)
 </script>
 
 <DraggableLabel bind:value={top} label="top" />
@@ -28,16 +37,15 @@
 
   <Scroller {top} {bottom} {threshold} bind:index bind:offset bind:progress>
     <div slot="background">
-      {#if index >= 0 && offset > 0}
-        <div in:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 0 }} out:fade>
-          <Question number={1} question="Do you like Svelte?" step={index} />
-        </div>
-        <div in:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 100 }} out:fade>
-          <Question number={2} question="Do you like Tailwind CSS?" step={index} />
-        </div>
-        <div in:fly={{ duration: 1500, y: "100vh", opacity: 0.5, delay: 200 }} out:fade>
-          <Question number={3} question="Do you like Snowpack?" step={index} />
-        </div>
+      {#if firstSectionInView}
+        {#each questions as question, i}
+          <div
+            in:fly|global={{ duration: 1500, y: "100vh", opacity: 0.5, delay: i * 100 }}
+            out:fade|global={{ duration: 400 }}
+          >
+            <Question number={i + 1} {question} />
+          </div>
+        {/each}
       {/if}
     </div>
 
@@ -46,6 +54,7 @@
         <p class="flex border">
           First a candidate will be asked to fill a questionnaire with some political questions.
         </p>
+        <Scatterplot {data} />
       </section>
       <section>
         Each answer corresponds to a particular value - the candidate's answer for each question is
@@ -54,19 +63,6 @@
       <section>This is the third section.</section>
     </div>
   </Scroller>
-
-  <Question number={1} question="Do you like Svelte?" />
-  <Question number={2} question="Do you like Tailwind CSS?" />
-  <Question number={3} question="Do you like Snowpack?" />
-  <!-- <Question number={4} question="Do you like Vite?" /> -->
-  <Question
-    number={5}
-    question="Do you like the combination of Svelte, Tailwind CSS, Snowpack, and Vite?"
-  />
-  <Question
-    number={6}
-    question="Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis, odio?"
-  />
 </main>
 
 <style>
@@ -90,5 +86,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
   }
 </style>

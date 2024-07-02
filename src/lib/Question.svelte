@@ -1,7 +1,6 @@
 <script>
   export let question
   export let number
-  export let step
 
   let selectedAnswer
 
@@ -33,7 +32,7 @@
         {index === answers.length - 1 ? 'rounded-r-xl' : ''}"
         on:click={() => selectAnswer(answer.value)}
       >
-        {step === 1 ? answer.value : answer.label}
+        {answer.label}
       </button>
     {/each}
   </div>
