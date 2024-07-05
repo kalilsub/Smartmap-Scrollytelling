@@ -4,13 +4,9 @@
   import Question from "./lib/Question.svelte"
   import DraggableLabel from "./lib/DraggableLabel.svelte"
   import Scatterplot from "./lib/Scatterplot.svelte"
-  // @ts-ignore
-  import data from "./data/combined_0.csv"
+  import Scroller from "./lib/Scroller.svelte"
 
   import { fade, fly } from "svelte/transition"
-  import { processData } from "./utils/process"
-
-  import Scroller from "./lib/Scroller.svelte"
   let count
   let index
   let offset
@@ -19,14 +15,10 @@
   let threshold = 0.5
   let bottom = 0.9
 
-  processData(data)
-
   const questions = ["Do you like Svelte?", "Do you like Tailwind CSS?", "Do you like Snowpack?"]
 
   $: firstSectionInView = index === 0 && offset > 0
   $: secondSectionInView = index >= 1 && offset > 0
-
-  $: console.log(data)
 </script>
 
 <DraggableLabel bind:value={top} label="top" />
@@ -54,7 +46,7 @@
         <p class="flex border">
           First a candidate will be asked to fill a questionnaire with some political questions.
         </p>
-        <Scatterplot {data} />
+        <Scatterplot />
       </section>
       <section>
         Each answer corresponds to a particular value - the candidate's answer for each question is

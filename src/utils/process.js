@@ -4,7 +4,8 @@ export function processData(data) {
       (d.y = +d.y),
       (d.index = +d.index),
       (d.party_id = +d.party_id),
-      (d.index = +d.index)
+      (d.index = +d.index),
+      (d.candidate_id = +d.candidate_id)
   })
 
   return data

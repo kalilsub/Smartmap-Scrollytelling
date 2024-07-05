@@ -1,18 +1,33 @@
 <script>
+  import { selectedCandidate, csvData } from "../stores/store"
+
   export let question
   export let number
 
-  let selectedAnswer
-
   const answers = [
-    { label: "Yes", value: "+2" },
-    { label: "Rather yes", value: "+1" },
-    { label: "Rather no", value: "-1" },
-    { label: "No", value: "-2" },
+    { label: "Yes", value: 1.0 },
+    { label: "Rather yes", value: 0.75 },
+    { label: "Rather no", value: 0.5 },
+    { label: "No", value: 0.25 },
   ]
 
+  $: selectedAnswer = $selectedCandidate.answers[number - 1]
+
+  function getRandomCoordinate(min, max) {
+    return Math.random() * (max - min) + min
+  }
+
   function selectAnswer(value) {
-    selectedAnswer = value
+    $selectedCandidate.answers[number - 1] = value
+
+    const index = $csvData.findIndex(
+      (candidate) => candidate.candidate_id === $selectedCandidate.id,
+    )
+
+    if (index !== -1) {
+      $csvData[index].x = getRandomCoordinate(-2.5, 2.5)
+      $csvData[index].y = getRandomCoordinate(-2.5, 2.5)
+    }
   }
 </script>
 

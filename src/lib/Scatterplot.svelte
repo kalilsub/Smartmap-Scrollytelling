@@ -1,10 +1,9 @@
 <script>
   import * as d3 from "d3"
+  import { csvData } from "../stores/store"
 
   let width
   let height
-
-  export let data
 
   const margin = { top: 30, bottom: 30, left: 30, right: 30 }
 
@@ -12,12 +11,12 @@
   // let interpolatedWidth = 0;
   $: xScale = d3
     .scaleLinear()
-    .domain(d3.extent(data, (d) => d.x))
+    .domain(d3.extent($csvData, (d) => d.x))
     .range([margin.left, width - margin.right])
 
   $: yScale = d3
     .scaleLinear()
-    .domain(d3.extent(data, (d) => d.y))
+    .domain(d3.extent($csvData, (d) => d.y))
     .range([height - margin.top, margin.bottom])
 
   $: xTicks = xScale.ticks(5)
@@ -42,7 +41,7 @@
       {/each}
     </g>
 
-    <!-- {#each data as d}
+    <!-- {#each $csvData as d}
       <rect
         x={xScale(d.x)}
         y={yScale(d.y)}
@@ -56,11 +55,11 @@
       />
     {/each} -->
 
-    {#each data as d}
+    {#each $csvData as d}
       <circle
         cx={xScale(d.x)}
         cy={yScale(d.y)}
-        r={10}
+        r={5}
         fill={d.color}
         stroke="#000000"
         opacity=".9"
