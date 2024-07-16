@@ -72,6 +72,8 @@
   export let threshold = 0.5
   export let query = "section"
   export let parallax = false
+  export let isRightSide = false
+  export let isLeftSide = false
 
   // bindings
   export let index = 0
@@ -105,7 +107,7 @@
 		transform: translate(0, ${offset_top}px);
 	`
 
-  $: widthStyle = fixed ? `width:$ 50%;` : ""
+  $: widthStyle = fixed ? `width: 50%;` : ""
 
   onMount(() => {
     sections = foreground.querySelectorAll(query)

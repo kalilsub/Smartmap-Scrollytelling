@@ -73,7 +73,12 @@
     width: 100%;
     max-width: 500px;
     height: 500px;
+    margin: 3em;
     border-radius: 5px;
     box-shadow: 1px 1px 6px #cecece;
+  }
+
+  circle {
+    transition: 1s;
   }
 </style>
