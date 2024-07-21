@@ -1,6 +1,7 @@
 <script>
   import { selectedCandidate, csvData } from "../stores/store"
   import { fade, fly } from "svelte/transition"
+  import Vector from "./Vector.svelte"
 
   export let question
   export let number
@@ -84,10 +85,9 @@
   </div>
 
   {#if secondStep}
-    <div
-      in:fade={{ delay: 2000 }}
-      class="w-20 h-20 absolute bg-red-500 transition-opacity delay-1000"
-    ></div>
+    <Vector {number} {selectedAnswer} />
+    <!-- <Vector {number} {selectedAnswer} />
+    <Vector {number} {selectedAnswer} /> -->
   {/if}
 </div>
 
