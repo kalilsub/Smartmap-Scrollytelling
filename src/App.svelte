@@ -3,11 +3,12 @@
   import Hero from "./lib/Hero.svelte"
   import Intro from "./lib/Intro.svelte"
   import Question from "./lib/Question.svelte"
+  import Vector from "./lib/Vector.svelte"
   import DraggableLabel from "./lib/DraggableLabel.svelte"
   import Scatterplot from "./lib/Scatterplot.svelte"
   import Scroller from "./lib/Scroller.svelte"
 
-  import { fade, fly } from "svelte/transition"
+  import { fade, slide } from "svelte/transition"
   let count
   let index
   let offset
@@ -19,11 +20,10 @@
 
   const questions = ["Do you like Svelte?", "Do you like Tailwind CSS?", "Do you like Snowpack?"]
 
-  // $: console.log(progress, offset, index)
-
   $: firstStep = index >= 0 && progress > -0.2
-  $: secondStep = index >= 1 && offset > 0.2
   $: firstSectionEnd = progress > 0.3
+  $: secondStep = index >= 1 && offset > 0.2
+  $: secondStepMiddle = index >= 1 && offset > 0.3
 </script>
 
 <!-- <DraggableLabel bind:value={top} label="top" />
@@ -35,15 +35,27 @@
 
   <Scroller {top} {bottom} {threshold} bind:index bind:offset bind:progress>
     <div slot="background">
-      <div
-        class={`transition-transform ${secondStep ? "-translate-x-[240px] delay-1000 duration-1000 relative" : "translate-x-0 duration-500 delay-0"}  flex min-h-[550px] flex-col items-center`}
-      >
+      <div class="flex min-h-[550px] transition-all">
+        {#if firstStep && !secondStepMiddle}
+          <div
+            class="transition-opacity duration-700"
+            class:opacity-0={secondStep}
+            class:opacity-100={!secondStep}
+          >
+            {#each questions as question, i}
+              <div
+                in:fade|global={{ delay: i * 100 }}
+                out:slide|global={{ duration: 800, axis: "x", delay: 700 }}
+              >
+                <Question number={i + 1} {question} />
+              </div>
+            {/each}
+          </div>
+        {/if}
         {#if firstStep}
-          {#each questions as question, i}
-            <div in:fade|global={{ delay: i * 100 }} out:fade|global={{ duration: 300 }}>
-              <Question number={i + 1} {question} {secondStep} />
-            </div>
-          {/each}
+          <div out:fade class="my-auto">
+            <Vector />
+          </div>
         {/if}
       </div>
     </div>
@@ -72,21 +84,6 @@
       </section>
     </div>
   </Scroller>
-
-  <!-- <Scroller
-    {top}
-    {bottom}
-    {threshold}
-    bind:index={index2}
-    bind:offset={offset2}
-    bind:progress={progress2}
-  >
-    <div slot="background">f</div>
-
-    <div slot="foreground">
-      <section>hey</section>
-    </div>
-  </Scroller> -->
 </main>
 
 <style>
@@ -111,5 +108,12 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+  }
+
+  .opacity-0 {
+    opacity: 0;
+  }
+  .opacity-100 {
+    opacity: 1;
   }
 </style>

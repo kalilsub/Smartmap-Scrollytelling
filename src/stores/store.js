@@ -6,5 +6,11 @@ import { processData } from "../utils/process"
 export const csvData = writable(processData(data))
 export const selectedCandidate = writable({
   id: 1910,
-  answers: [0.25, 1, 1],
+  answers: [
+    { value: 1, isSelected: false },
+    { value: 1, isSelected: false },
+    { value: 0.25, isSelected: false },
+  ],
 })
+
+export const componentUpdates = writable([0, 0, 0])
