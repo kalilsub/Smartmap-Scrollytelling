@@ -7,8 +7,9 @@
   import DraggableLabel from "./lib/DraggableLabel.svelte"
   import Scatterplot from "./lib/Scatterplot.svelte"
   import Scroller from "./lib/Scroller.svelte"
+  import { selectedCandidate } from "./stores/store"
 
-  import { fade, slide } from "svelte/transition"
+  import { fade, slide, fly } from "svelte/transition"
   let count
   let index
   let offset
@@ -22,39 +23,40 @@
 
   $: firstStep = index >= 0 && progress > -0.2
   $: firstSectionEnd = progress > 0.3
-  $: secondStep = index >= 1 && offset > 0.2
-  $: secondStepMiddle = index >= 1 && offset > 0.3
+  $: secondStep = index >= 1 && progress > 0.45
+  $: thirdStep = index >= 2
 </script>
 
-<!-- <DraggableLabel bind:value={top} label="top" />
-<DraggableLabel bind:value={threshold} label="threshold" />
-<DraggableLabel bind:value={bottom} label="bottom" /> -->
 <main class="min-w-[1024px]">
   <Hero />
   <Intro />
 
   <Scroller {top} {bottom} {threshold} bind:index bind:offset bind:progress>
     <div slot="background">
-      <div class="flex min-h-[550px] transition-all">
-        {#if firstStep && !secondStepMiddle}
+      <div class="flex transition-all">
+        {#if firstStep && !secondStep}
           <div
+            transition:slide|global={{ duration: 800, axis: "x", delay: 700 }}
             class="transition-opacity duration-700"
-            class:opacity-0={secondStep}
-            class:opacity-100={!secondStep}
           >
             {#each questions as question, i}
-              <div
-                in:fade|global={{ delay: i * 100 }}
-                out:slide|global={{ duration: 800, axis: "x", delay: 700 }}
-              >
-                <Question number={i + 1} {question} />
-              </div>
+              <Question number={i + 1} {question} />
             {/each}
           </div>
         {/if}
         {#if firstStep}
-          <div out:fade class="my-auto">
-            <Vector />
+          <div out:fade>
+            <Vector store={$selectedCandidate} {secondStep} />
+          </div>
+        {/if}
+
+        {#if thirdStep}
+          <div in:fly={{ x: -100, delay: 100, duration: 1000, opacity: 0 }} out:fade>
+            <Vector gap {secondStep} />
+          </div>
+
+          <div in:fly={{ x: -100, delay: 200, duration: 1000, opacity: 0 }} out:fade>
+            <Vector gap {secondStep} />
           </div>
         {/if}
       </div>
@@ -80,7 +82,11 @@
       </section>
 
       <section>
-        <p>Each answer is evaluated and stored inside a vector</p>
+        <p>In reality the candidate answers 75 questions and the answers are stored as a vector.</p>
+      </section>
+
+      <section>
+        <p>... Also there should be more than 1 candidate</p>
       </section>
     </div>
   </Scroller>
@@ -108,12 +114,5 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-  }
-
-  .opacity-0 {
-    opacity: 0;
-  }
-  .opacity-100 {
-    opacity: 1;
   }
 </style>
