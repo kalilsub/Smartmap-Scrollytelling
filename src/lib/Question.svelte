@@ -1,5 +1,5 @@
 <script>
-  import { selectedCandidate, csvData, componentUpdates } from "../stores/store"
+  import { selectedCandidate, csvData } from "../stores/store"
 
   export let question
   export let number
@@ -20,9 +20,6 @@
   function selectAnswer(value) {
     $selectedCandidate.answers[number - 1].value = value
     $selectedCandidate.answers[number - 1].isSelected = true
-
-    // needed for vector component
-    $componentUpdates[number - 1]++
 
     const index = $csvData.findIndex(
       (candidate) => candidate.candidate_id === $selectedCandidate.id,

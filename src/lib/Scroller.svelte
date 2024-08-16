@@ -72,8 +72,7 @@
   export let threshold = 0.5
   export let query = "section"
   export let parallax = false
-  export let isRightSide = false
-  export let isLeftSide = false
+  export let layoutDirection = "left"
 
   // bindings
   export let index = 0
@@ -103,7 +102,7 @@
   $: style = `
 		position: ${fixed ? "fixed" : "absolute"};
 		top: 0;
-        right: 0;
+    ${layoutDirection === "left" ? "right: 0;" : ""}
 		transform: translate(0, ${offset_top}px);
 	`
 
@@ -181,7 +180,7 @@
     </svelte-scroller-background>
   </svelte-scroller-background-container>
 
-  <svelte-scroller-foreground bind:this={foreground}>
+  <svelte-scroller-foreground bind:this={foreground} class="{layoutDirection}-layout">
     <slot name="foreground"></slot>
   </svelte-scroller-foreground>
 </svelte-scroller-outer>
@@ -202,6 +201,10 @@
     display: block;
     position: relative;
     width: 50%;
+  }
+
+  svelte-scroller-foreground.right-layout {
+    left: 50%;
   }
 
   svelte-scroller-foreground::after {

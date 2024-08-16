@@ -41,20 +41,6 @@
       {/each}
     </g>
 
-    <!-- {#each $csvData as d}
-      <rect
-        x={xScale(d.x)}
-        y={yScale(d.y)}
-        width={activeStep >= finalStep - 1 ? interpolatedWidth : 20}
-        height={activeStep >= finalStep - 1 ? interpolatedHeight(d.y) : 20}
-        rx={activeStep >= finalStep - 1 ? interpolatedRadius : 10}
-        ry={activeStep >= finalStep - 1 ? interpolatedRadius : 10}
-        fill={d.color}
-        stroke="#000000"
-        opacity=".9"
-      />
-    {/each} -->
-
     {#each $csvData as d}
       <circle
         cx={xScale(d.x)}

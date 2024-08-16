@@ -12,5 +12,3 @@ export const selectedCandidate = writable({
     { value: 0.25, isSelected: false },
   ],
 })
-
-export const componentUpdates = writable([0, 0, 0])
