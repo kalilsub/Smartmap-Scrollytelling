@@ -30,11 +30,27 @@
   // based on the calculated vector distances
   $: newPoints = adjustPoints($candidatePoints, normalisedDistances)
 
-  $: if (scrollPosition > 0.13) {
-    candidatePoints.set(newPoints)
-  } else {
-    // reset
-    candidatePoints.set(data)
+  $: {
+    let indexToUpdate = -1
+
+    if (scrollPosition > 0.13 && scrollPosition < 0.42) {
+      indexToUpdate = 0
+    } else if (scrollPosition > 0.42 && scrollPosition < 0.71) {
+      indexToUpdate = 1
+    } else if (scrollPosition > 0.71) {
+      indexToUpdate = 2
+    }
+
+    if (indexToUpdate !== -1) {
+      candidatePoints.set(
+        $candidatePoints.map((point, index) =>
+          index === indexToUpdate ? newPoints[indexToUpdate] : point,
+        ),
+      )
+    } else {
+      // reset
+      candidatePoints.set(data)
+    }
   }
 </script>
 
