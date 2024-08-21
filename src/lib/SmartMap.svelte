@@ -7,8 +7,6 @@
 
   const margin = { top: 30, bottom: 30, left: 30, right: 30 }
 
-  // let interplateHeight = 0;
-  // let interpolatedWidth = 0;
   $: xScale = d3
     .scaleLinear()
     .domain(d3.extent($csvData, (d) => d.x))

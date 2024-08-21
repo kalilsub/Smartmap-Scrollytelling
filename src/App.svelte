@@ -6,11 +6,14 @@
   import Vector from "./lib/Vector.svelte"
   import VectorGroup from "./lib/VectorGroup.svelte"
   import DraggableLabel from "./lib/DraggableLabel.svelte"
-  import Scatterplot from "./lib/Scatterplot.svelte"
+  import SmartMap from "./lib/SmartMap.svelte"
+  import Grid from "./lib/Grid.svelte"
   import Scroller from "./lib/Scroller.svelte"
-  import { selectedCandidate } from "./stores/store"
+  import Avatar from "./lib/Avatar.svelte"
+  import { selectedCandidates } from "./stores/store"
 
   import { fade, slide, fly } from "svelte/transition"
+
   let count
   let index
   let offset
@@ -26,14 +29,22 @@
 
   const questions = ["Do you like Svelte?", "Do you like Tailwind CSS?", "Do you like Snowpack?"]
 
-  $: firstStep = index >= 0 && progress > -0.2
-  $: firstSectionEnd = progress > 0.3
-  $: secondStep = index >= 1 && progress > 0.45
-  $: thirdStep = index === 2
+  $: questionStep = index === 0 && offset > 0.16
+  $: vectorStep = index >= 1 && index < 3
+  $: showOthervectorsStep = index === 2
 
-  $: fourthStep = progress2 > 0 && progress2 < 0.4
-  $: fifthStep = progress2 > 0.4 && progress2 < 0.8
-  $: sixthStep = progress2 > 0.8
+  $: distanceStep = index >= 3
+  $: calculationOne = index === 3 && offset > 0.13 && offset < 0.42
+  $: calculationTwo = index === 3 && offset > 0.42 && offset < 0.71
+  $: calculationThree = index === 3 && offset > 0.71
+
+  $: myFadeIn = (node, params) => {
+    if (params.bottomBoundary) {
+      return fade(node, { ...params, delay: 100 })
+    } else {
+      return fade(node, { ...params, delay: 1500 })
+    }
+  }
 </script>
 
 <main class="min-w-[1024px]">
@@ -42,11 +53,14 @@
 
   <Scroller {top} {bottom} {threshold} bind:index bind:offset bind:progress>
     <div slot="background">
-      <div class="flex transition-all">
-        {#if firstStep && !secondStep}
+      <div class="flex">
+        {#if questionStep}
           <div
-            transition:slide|global={{ duration: 800, axis: "x", delay: 700 }}
-            class="transition-opacity duration-700"
+            transition:slide={{
+              duration: 800,
+              axis: "x",
+              delay: 700,
+            }}
           >
             {#each questions as question, i}
               <Question number={i + 1} {question} />
@@ -54,22 +68,56 @@
           </div>
         {/if}
 
-        {#if firstStep}
-          <div in:fade={{ delay: 1500 }} out:fade>
-            <Vector store={$selectedCandidate} {secondStep} />
-          </div>
-        {/if}
+        <div class="flex">
+          {#if questionStep || vectorStep}
+            <div in:myFadeIn={{ bottomBoundary: index === 2 }} out:fade={{ delay: 200 }}>
+              <Vector store={$selectedCandidates[0]} modified={vectorStep} />
+            </div>
+          {/if}
 
-        {#if thirdStep}
-          <div in:fly={{ x: -100, delay: 100, duration: 1000, opacity: 0 }} out:fade>
-            <Vector gap {secondStep} />
-          </div>
+          {#if showOthervectorsStep}
+            <div
+              in:fly={{
+                x: -100,
+                delay: 100,
+                duration: 1000,
+                opacity: 0,
+              }}
+              out:fade={{ delay: 200 }}
+            >
+              <Vector store={$selectedCandidates[1]} gap modified={vectorStep} />
+            </div>
 
-          <div in:fly={{ x: -100, delay: 200, duration: 1000, opacity: 0 }} out:fade>
-            <Vector gap {secondStep} />
-          </div>
-        {/if}
+            <div
+              in:fly={{
+                x: -100,
+                delay: 200,
+                duration: 1000,
+                opacity: 0,
+              }}
+              out:fade={{ delay: 200 }}
+            >
+              <Vector store={$selectedCandidates[2]} gap modified={vectorStep} />
+            </div>
+          {/if}
+        </div>
       </div>
+
+      {#if showOthervectorsStep}
+        <div class="flex w-[354px] justify-between px-3 mt-5">
+          {#each [1, 2, 3] as candidate}
+            <div in:fly|global={{ y: 100, duration: 1000, delay: 200, opacity: 0 }} out:fly|global>
+              <Avatar imageSrc={`/images/candidate-${candidate}.jpg`} />
+            </div>
+          {/each}
+        </div>
+      {/if}
+
+      {#if distanceStep}
+        <div in:fade={{ delay: 700 }}>
+          <Grid scrollPosition={offset} />
+        </div>
+      {/if}
     </div>
 
     <div slot="foreground">
@@ -81,15 +129,10 @@
             Also, notice that for each answer there is a corresponding numerical value.
           </p>
 
-          <Scatterplot />
-
-          <div class="h-6">
-            {#if firstSectionEnd}
-              <p transition:fade|global>
-                But wait... how are the coordinates coordinates calculated? Scroll down to find out!
-              </p>
-            {/if}
-          </div>
+          <SmartMap />
+          <p>
+            But wait... how are the coordinates coordinates calculated? Scroll down to find out!
+          </p>
         </div>
       </section>
 
@@ -106,39 +149,18 @@
           <p>... Also there should be more than 1 candidate</p>
         </div>
       </section>
-    </div>
-  </Scroller>
 
-  <Scroller
-    {top}
-    {bottom}
-    {threshold}
-    layoutDirection="right"
-    bind:index={index2}
-    bind:offset={offset2}
-    bind:progress={progress2}
-  >
-    <div slot="background">
-      {#if progress2 > -0.15}
-        <div transition:fade={{ delay: 400 }}>
-          <Scatterplot />
-        </div>
-      {/if}
-    </div>
-
-    <div slot="foreground">
-      <section class="min-h-[2000px] block">
+      <section class="min-h-[5000px] block">
         <div class="sticky top-20 mt-80 text-center border border-solid border-black">
           <p>We then calculate the euclidean distance between each 2 answer vectors</p>
-          {progress2}
 
           <div class="flex flex-col items-center">
-            {#if fourthStep}
-              <VectorGroup candidate1={1} candidate2={2} distance={5} />
-            {:else if fifthStep}
-              <VectorGroup candidate1={1} candidate2={3} distance={4} />
-            {:else if sixthStep}
-              <VectorGroup candidate1={2} candidate2={3} distance={1} />
+            {#if calculationOne}
+              <VectorGroup candidate1={1} candidate2={2} />
+            {:else if calculationTwo}
+              <VectorGroup candidate1={1} candidate2={3} />
+            {:else if calculationThree}
+              <VectorGroup candidate1={2} candidate2={3} />
             {/if}
           </div>
         </div>

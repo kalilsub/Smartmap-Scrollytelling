@@ -1,5 +1,5 @@
 <script>
-  import { selectedCandidate, csvData } from "../stores/store"
+  import { selectedCandidates, csvData } from "../stores/store"
 
   export let question
   export let number
@@ -11,18 +11,18 @@
     { label: "No", value: 0.25 },
   ]
 
-  $: selectedAnswer = $selectedCandidate.answers[number - 1]
+  $: selectedAnswer = $selectedCandidates[0].answers[number - 1]
 
   function getRandomCoordinate(min, max) {
     return Math.random() * (max - min) + min
   }
 
   function selectAnswer(value) {
-    $selectedCandidate.answers[number - 1].value = value
-    $selectedCandidate.answers[number - 1].isSelected = true
+    $selectedCandidates[0].answers[number - 1].value = value
+    $selectedCandidates[0].answers[number - 1].isSelected = true
 
     const index = $csvData.findIndex(
-      (candidate) => candidate.candidate_id === $selectedCandidate.id,
+      (candidate) => candidate.candidate_id === $selectedCandidates[0].id,
     )
 
     // calculate new coordinates for the selected candidate
