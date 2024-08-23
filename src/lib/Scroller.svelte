@@ -72,8 +72,7 @@
   export let threshold = 0.5
   export let query = "section"
   export let parallax = false
-  export let layoutDirection = "left"
-
+  export let isDesktop
   // bindings
   export let index = 0
   export let count = 0
@@ -93,6 +92,8 @@
   let height
   let inverted
 
+  $: desktop = isDesktop ? "isDesktop" : ""
+
   $: top_px = Math.round(top * wh)
   $: bottom_px = Math.round(bottom * wh)
   $: threshold_px = Math.round(threshold * wh)
@@ -102,11 +103,12 @@
   $: style = `
 		position: ${fixed ? "fixed" : "absolute"};
 		top: 0;
-    ${layoutDirection === "left" ? "right: 0;" : ""}
+    ${isDesktop ? "right: 0;" : ""}
 		transform: translate(0, ${offset_top}px);
+		z-index: ${inverted ? 3 : 1};
 	`
 
-  $: widthStyle = fixed ? `width: 50%;` : ""
+  $: widthStyle = fixed ? (isDesktop ? " width: 50%" : `width:${width}px;`) : ""
 
   onMount(() => {
     sections = foreground.querySelectorAll(query)
@@ -174,13 +176,16 @@
 <svelte:window bind:innerHeight={wh} />
 
 <svelte-scroller-outer bind:this={outer}>
-  <svelte-scroller-background-container class="background-container" style="{style}{widthStyle}">
+  <svelte-scroller-background-container
+    class="background-container {desktop}"
+    style="{style}{widthStyle}"
+  >
     <svelte-scroller-background bind:this={background}>
       <slot name="background"></slot>
     </svelte-scroller-background>
   </svelte-scroller-background-container>
 
-  <svelte-scroller-foreground bind:this={foreground} class="{layoutDirection}-layout">
+  <svelte-scroller-foreground class={desktop} bind:this={foreground}>
     <slot name="foreground"></slot>
   </svelte-scroller-foreground>
 </svelte-scroller-outer>
@@ -200,11 +205,11 @@
   svelte-scroller-foreground {
     display: block;
     position: relative;
-    width: 50%;
+    z-index: 2;
   }
 
-  svelte-scroller-foreground.right-layout {
-    left: 50%;
+  svelte-scroller-foreground.isDesktop {
+    width: 50%;
   }
 
   svelte-scroller-foreground::after {
@@ -216,7 +221,7 @@
   svelte-scroller-background-container {
     display: block;
     position: absolute;
-    width: 50%;
+    width: 100%;
     max-width: 100%;
     pointer-events: none;
     /* height: 100%; */
@@ -226,5 +231,9 @@
     /* -webkit-transform: translate3d(0, 0, 0);
 		-moz-transform: translate3d(0, 0, 0);
 		transform: translate3d(0, 0, 0); */
+  }
+
+  svelte-scroller-background-container.isDesktop {
+    width: 50%;
   }
 </style>

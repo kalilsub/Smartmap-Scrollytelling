@@ -11,6 +11,7 @@
   import Scroller from "./lib/Scroller.svelte"
   import Avatar from "./lib/Avatar.svelte"
   import { selectedCandidates } from "./stores/store"
+  import { questions, questionsMobile } from "./data/questions"
 
   import { fade, slide, fly } from "svelte/transition"
 
@@ -27,7 +28,10 @@
   let threshold = 0.5
   let bottom = 0.9
 
-  const questions = ["Do you like Svelte?", "Do you like Tailwind CSS?", "Do you like Snowpack?"]
+  // TODO: there has to be a better way
+  let isDesktop = false
+  let isTablet = false
+  let isSmallMobile = false
 
   $: questionStep = index === 0 && offset > 0.16
   $: vectorStep = index >= 1 && index < 3
@@ -38,6 +42,8 @@
   $: calculationTwo = index === 3 && offset > 0.42 && offset < 0.71
   $: calculationThree = index === 3 && offset > 0.71
 
+  $: cards = isDesktop ? questions : questionsMobile
+
   $: myFadeIn = (node, params) => {
     if (params.bottomBoundary) {
       return fade(node, { ...params, delay: 100 })
@@ -45,15 +51,29 @@
       return fade(node, { ...params, delay: 1500 })
     }
   }
+
+  function checkScreenSize() {
+    const lg = window.matchMedia("(min-width: 1024px)")
+    const md = window.matchMedia("(min-width: 768px)")
+    const xs = window.matchMedia("(max-width: 480px)")
+    isDesktop = lg.matches
+    isTablet = md.matches
+    isSmallMobile = xs.matches
+  }
+
+  checkScreenSize()
+  window.addEventListener("resize", checkScreenSize)
 </script>
 
-<main class="min-w-[1024px]">
-  <Hero />
+<!-- class="min-w-[1024px]" -->
+<main>
+  <!-- <Hero /> -->
   <Intro />
 
-  <Scroller {top} {bottom} {threshold} bind:index bind:offset bind:progress>
+  <Scroller {top} {bottom} {threshold} {isDesktop} bind:index bind:offset bind:progress>
     <div slot="background">
-      <div class="flex">
+      <SmartMap {isDesktop} {isTablet} {isSmallMobile} />
+      <!-- <div class="flex">
         {#if questionStep}
           <div
             transition:slide={{
@@ -63,7 +83,7 @@
             }}
           >
             {#each questions as question, i}
-              <Question number={i + 1} {question} />
+              <Question number={i + 1} {question} showChoices={questionStep} />
             {/each}
           </div>
         {/if}
@@ -117,22 +137,25 @@
         <div in:fade={{ delay: 700 }}>
           <Grid scrollPosition={offset} />
         </div>
-      {/if}
+      {/if} -->
     </div>
 
     <div slot="foreground">
-      <section class="flex min-h-[1000px] justify-start">
+      <!-- min-h-[1000px] -->
+      <section class="flex justify-start">
         <div class="border border-solid border-black">
           <p class="flex">
             First a candidate will be asked to fill a questionnaire with some political questions.
             Try selecting different answers for candidate X and see how the coordinates change.
             Also, notice that for each answer there is a corresponding numerical value.
           </p>
+          <div class="flex flex-wrap gap-2 lg:flex-nowrap lg:flex-col">
+            {#each cards as question, i}
+              <Question number={i + 1} {question} />
+            {/each}
+          </div>
 
-          <SmartMap />
-          <p>
-            But wait... how are the coordinates coordinates calculated? Scroll down to find out!
-          </p>
+          <!-- <SmartMap /> -->
         </div>
       </section>
 
@@ -140,21 +163,35 @@
         <div class="border border-solid border-black">
           <p>
             In reality the candidate answers 75 questions and the answers are stored as a vector.
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Esse nemo amet soluta ipsum
+            voluptatibus quis laborum ratione nihil, quas doloribus.
           </p>
         </div>
       </section>
 
       <section class="flex">
         <div class="border border-solid border-black">
-          <p>... Also there should be more than 1 candidate</p>
+          <p>
+            ... Also there should be more than 1 candidate. Lorem ipsum dolor sit amet consectetur
+            adipisicing elit. Aperiam sapiente possimus consequuntur aliquam id dicta illo nulla
+            veritatis culpa. Cupiditate consequuntur eius in, itaque nihil architecto nulla est ea
+            veniam.
+          </p>
         </div>
       </section>
 
-      <section class="min-h-[5000px] block">
+      <!-- min-h-[5000px] block -->
+      <section class="">
         <div class="sticky top-20 mt-80 text-center border border-solid border-black">
-          <p>We then calculate the euclidean distance between each 2 answer vectors</p>
+          <p>
+            We then calculate the euclidean distance between each 2 answer vectors. Lorem ipsum
+            dolor sit amet consectetur adipisicing elit. Sint expedita tenetur voluptate sapiente
+            quae tempora odit eius autem molestias modi unde perferendis fuga cum laboriosam sequi
+            placeat, consequatur qui dicta recusandae, in illum ullam error vitae sit! Quis, iste
+            qui!
+          </p>
 
-          <div class="flex flex-col items-center">
+          <!-- <div class="flex flex-col items-center">
             {#if calculationOne}
               <VectorGroup candidate1={1} candidate2={2} />
             {:else if calculationTwo}
@@ -162,7 +199,7 @@
             {:else if calculationThree}
               <VectorGroup candidate1={2} candidate2={3} />
             {/if}
-          </div>
+          </div> -->
         </div>
       </section>
     </div>

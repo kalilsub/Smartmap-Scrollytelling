@@ -11,6 +11,10 @@ export function processData(data) {
   return data
 }
 
+export function getRandomCoordinate(min, max) {
+  return Math.random() * (max - min) + min
+}
+
 export function getDistances(candidates) {
   const distances = []
 

@@ -6,7 +6,7 @@ import data from "../data/combined.csv"
 import { data as initialCoordinates } from "../data/candidateCoordinates"
 import { processData, getDistances, calculateDistance } from "../utils/helpers"
 
-export const csvData = writable(processData(data))
+export const csvData = tweened(processData(data))
 export const selectedCandidates = writable([
   {
     id: 1910,
@@ -14,6 +14,7 @@ export const selectedCandidates = writable([
       { value: 1, isSelected: false },
       { value: 1, isSelected: false },
       { value: 0.25, isSelected: false },
+      { value: 0.5, isSelected: false },
     ],
   },
   {
@@ -22,6 +23,7 @@ export const selectedCandidates = writable([
       { value: 0.5, isSelected: false },
       { value: 0.75, isSelected: false },
       { value: 0.25, isSelected: false },
+      { value: 1, isSelected: false },
     ],
   },
 
@@ -31,6 +33,16 @@ export const selectedCandidates = writable([
       { value: 0, isSelected: false },
       { value: 0.25, isSelected: false },
       { value: 1, isSelected: false },
+      { value: 0.5, isSelected: false },
+    ],
+  },
+
+  {
+    id: 4,
+    answers: [
+      { value: 0.5, isSelected: false },
+      { value: 0.25, isSelected: false },
+      { value: 0.25, isSelected: false },
     ],
   },
 ])

@@ -1,10 +1,8 @@
 <script>
 </script>
 
-<div class="bg-gradient-to-b from-[#1da1f290] to-[var(--background)]">
-  <div
-    class="mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center text-center font-serif"
-  >
+<div>
+  <div class="mx-auto flex flex-col items-center justify-center text-center font-serif">
     <h1
       class="px-4 text-[6.5rem] font-extrabold uppercase leading-tight sm:text-[3.5rem] md:text-[4.5rem] lg:text-[6rem]"
     >
