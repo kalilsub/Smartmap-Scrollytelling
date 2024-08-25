@@ -1,27 +1,46 @@
 <script>
-  import { fly, fade } from "svelte/transition"
+  import { fly, fade, scale } from "svelte/transition"
+  import Katex from "./Katex.svelte"
 
   export let store = { answers: [{ value: 0 }, { value: 0 }, { value: 0 }] }
   export let modified = false
   export let gap = false
   export let layout = "vertical"
   export let candidate = 0
+  export let isDesktop
+
+  let answers
+
+  // $: {
+  //   if (!isDesktop) {
+  //     answers = store.answers.slice(0, -1)
+  //   } else {
+  //     answers = store.answers
+  //   }
+  // }
+
+  $: vectorExpression = `\\begin{bmatrix} ${store.answers.map((a) => a.value).join(" \\\\ ")} \\end{bmatrix}`
 </script>
 
 <div
-  class={`h-[550px] w-16 flex flex-col justify-around relative vector-border ${gap && "ml-20"} ${modified && "vector-border-color"} ${layout}`}
+  class={` flex ${isDesktop ? "flex-col h-[550px] w-16 vector-border" : "h-32  max-w-lg"} mx-auto justify-around relative  ${gap && "ml-20"} ${modified && "vector-border-color"} ${layout}`}
 >
   {#if layout === "horizontal"}
     <span class="absolute self-center -left-24">Candidate {candidate}</span>
   {/if}
 
+  <!-- <div class="flex-1 flex items-center justify-center">
+    <Katex expression={vectorExpression} displayMode={true} />
+  </div> -->
+
   {#each store.answers as answer, i}
-    <div class="flex-1 flex items-center">
+    <div class="flex-1 flex items-center {!isDesktop && 'justify-center'}">
       {#key answer.value}
         <div
-          in:fly={{ x: 100, duration: 1000 }}
-          out:fade={{ duration: 200 }}
-          class="w-9 h-9 flex justify-center items-center rounded-2xl bg-slate-500 text-center ml-2 absolute transition-all duration-1000 delay-[1500ms]"
+          transition:scale
+          class="w-9 h-9 flex justify-center items-center rounded-2xl bg-slate-500 text-center {isDesktop
+            ? 'ml-[10px]'
+            : 'mx-auto'} absolute transition-all duration-1000 delay-[1500ms]"
           class:slide-up-1={modified && i === 1}
           class:slide-up-2={modified && i === 2}
           class:slide-down={!modified && i > 0}

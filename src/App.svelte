@@ -10,6 +10,7 @@
   import Grid from "./lib/Grid.svelte"
   import Scroller from "./lib/Scroller.svelte"
   import Avatar from "./lib/Avatar.svelte"
+  import Katex from "./lib/Katex.svelte"
   import { selectedCandidates } from "./stores/store"
   import { questions, questionsMobile } from "./data/questions"
 
@@ -33,6 +34,8 @@
   let isTablet = false
   let isSmallMobile = false
 
+  let showAnswerVector = false
+
   $: questionStep = index === 0 && offset > 0.16
   $: vectorStep = index >= 1 && index < 3
   $: showOthervectorsStep = index === 2
@@ -42,7 +45,7 @@
   $: calculationTwo = index === 3 && offset > 0.42 && offset < 0.71
   $: calculationThree = index === 3 && offset > 0.71
 
-  $: cards = isDesktop ? questions : questionsMobile
+  $: cards = questions
 
   $: myFadeIn = (node, params) => {
     if (params.bottomBoundary) {
@@ -56,23 +59,47 @@
     const lg = window.matchMedia("(min-width: 1024px)")
     const md = window.matchMedia("(min-width: 768px)")
     const xs = window.matchMedia("(max-width: 480px)")
+
     isDesktop = lg.matches
     isTablet = md.matches
     isSmallMobile = xs.matches
   }
 
+  function switchVisualisation() {
+    showAnswerVector = !showAnswerVector
+  }
+
   checkScreenSize()
   window.addEventListener("resize", checkScreenSize)
+  const math = "c = \\pm\\sqrt{a^2 + b^2}"
 </script>
 
 <!-- class="min-w-[1024px]" -->
 <main>
   <!-- <Hero /> -->
   <Intro />
+  <Katex expression={math} displayMode />
 
   <Scroller {top} {bottom} {threshold} {isDesktop} bind:index bind:offset bind:progress>
     <div slot="background">
-      <SmartMap {isDesktop} {isTablet} {isSmallMobile} />
+      {#if showAnswerVector || vectorStep}
+        <div transition:fade={{ delay: 400 }}>
+          <Vector store={$selectedCandidates[0]} modified={vectorStep} {isDesktop} />
+        </div>
+      {:else if questionStep}
+        <div transition:fade={{ delay: 400 }}>
+          <SmartMap {isDesktop} {isTablet} {isSmallMobile} />
+        </div>
+      {/if}
+
+      <!-- {#if vectorStep}
+        <div class="flex">
+          <div in:myFadeIn={{ bottomBoundary: index === 2 }} out:fade={{ delay: 200 }}>
+            <Vector store={$selectedCandidates[0]} modified={vectorStep} />
+          </div>
+        </div>
+      {/if} -->
+
       <!-- <div class="flex">
         {#if questionStep}
           <div
@@ -155,6 +182,8 @@
             {/each}
           </div>
 
+          <button on:click={switchVisualisation}> Show Answer Vector </button>
+
           <!-- <SmartMap /> -->
         </div>
       </section>
@@ -191,7 +220,7 @@
             qui!
           </p>
 
-          <!-- <div class="flex flex-col items-center">
+          <div class="flex flex-col items-center">
             {#if calculationOne}
               <VectorGroup candidate1={1} candidate2={2} />
             {:else if calculationTwo}
@@ -199,7 +228,7 @@
             {:else if calculationThree}
               <VectorGroup candidate1={2} candidate2={3} />
             {/if}
-          </div> -->
+          </div>
         </div>
       </section>
     </div>

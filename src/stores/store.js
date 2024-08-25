@@ -14,7 +14,6 @@ export const selectedCandidates = writable([
       { value: 1, isSelected: false },
       { value: 1, isSelected: false },
       { value: 0.25, isSelected: false },
-      { value: 0.5, isSelected: false },
     ],
   },
   {
@@ -23,7 +22,6 @@ export const selectedCandidates = writable([
       { value: 0.5, isSelected: false },
       { value: 0.75, isSelected: false },
       { value: 0.25, isSelected: false },
-      { value: 1, isSelected: false },
     ],
   },
 
@@ -33,7 +31,6 @@ export const selectedCandidates = writable([
       { value: 0, isSelected: false },
       { value: 0.25, isSelected: false },
       { value: 1, isSelected: false },
-      { value: 0.5, isSelected: false },
     ],
   },
 
