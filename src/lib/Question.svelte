@@ -1,7 +1,7 @@
 <script>
   import { selectedCandidates, csvData } from "../stores/store"
   import { getRandomCoordinate } from "../utils/helpers"
-  import { fade } from "svelte/transition"
+  import { scale } from "svelte/transition"
 
   export let question
   export let number
@@ -43,22 +43,22 @@
 
 <!-- w-[456px] h-44-->
 <div
-  class="w-full md:w-50 lg:w-full max-w-2xl mx-auto relative flex items-center text-sm xs:text-lg"
+  class="w-full lg:w-full max-w-2xl mx-auto my-3 relative flex items-center text-sm xs:text-base"
 >
-  <div class="w-full h-full bg-stone-800 px-8 py-6 text-zinc-50">
+  <div class="w-full h-full px-8">
     <div class="mb-2 xs:mb-6">
       <span class="absolute left-1.5">{number}.</span>
       {question}
     </div>
 
-    <div class="flex justify-center gap-2">
+    <div class="flex justify-center gap-2 mr-5">
       {#each answers as answer, index}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-
         <!--  min-h-16-->
         <button
-          class="w-full xs:w-16 ml-1 px-2 py-2 rounded-xl text-sm lg:text-base
-                {selectedAnswer.value === answer.value ? 'bg-stone-400' : 'bg-stone-700'}
+          class="w-full py-2 px-1 rounded-xl text-sm text-gray-50 font-medium transition-colors duration-300
+                {selectedAnswer.value === answer.value
+            ? 'bg-stone-400'
+            : 'bg-stone-700 hover:bg-stone-500'}
                 "
           on:click={() => selectAnswer(answer.value)}
         >
@@ -66,5 +66,14 @@
         </button>
       {/each}
     </div>
+
+    {#key selectedAnswer.value}
+      <span
+        transition:scale={{ duration: 600 }}
+        class="min-w-9 h-9 my-auto flex justify-center items-center rounded-2xl bg-stone-700 text-gray-50 text-center absolute right-0 bottom-px max-xs:bottom-3"
+      >
+        {selectedAnswer.value}
+      </span>
+    {/key}
   </div>
 </div>

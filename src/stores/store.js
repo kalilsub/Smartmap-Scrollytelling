@@ -33,15 +33,6 @@ export const selectedCandidates = writable([
       { value: 1, isSelected: false },
     ],
   },
-
-  {
-    id: 4,
-    answers: [
-      { value: 0.5, isSelected: false },
-      { value: 0.25, isSelected: false },
-      { value: 0.25, isSelected: false },
-    ],
-  },
 ])
 
 export const vectorDistances = derived(selectedCandidates, ($selectedCandidates) => {

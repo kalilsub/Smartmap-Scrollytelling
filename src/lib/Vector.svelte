@@ -3,110 +3,91 @@
   import Katex from "./Katex.svelte"
 
   export let store = { answers: [{ value: 0 }, { value: 0 }, { value: 0 }] }
-  export let modified = false
-  export let gap = false
-  export let layout = "vertical"
-  export let candidate = 0
-  export let isDesktop
 
-  let answers
+  let drawBorder = false
 
-  // $: {
-  //   if (!isDesktop) {
-  //     answers = store.answers.slice(0, -1)
-  //   } else {
-  //     answers = store.answers
-  //   }
-  // }
-
-  $: vectorExpression = `\\begin{bmatrix} ${store.answers.map((a) => a.value).join(" \\\\ ")} \\end{bmatrix}`
+  function myFly(node, params) {
+    if (params.index === 0) {
+      return
+    }
+    if (params.index === 1) {
+      return fly(node, { y: 100, ...params })
+    }
+    if (params.index === 2) {
+      return fly(node, { y: 200, ...params })
+    }
+  }
 </script>
 
 <div
-  class={` flex ${isDesktop ? "flex-col h-[550px] w-16 vector-border" : "h-32  max-w-lg"} mx-auto justify-around relative  ${gap && "ml-20"} ${modified && "vector-border-color"} ${layout}`}
+  class="flex flex-col h-[400px] xs:h-[500px] mx-auto px-2 justify-around relative vector-border {drawBorder &&
+    'vector-border-color'}"
 >
-  {#if layout === "horizontal"}
-    <span class="absolute self-center -left-24">Candidate {candidate}</span>
-  {/if}
-
-  <!-- <div class="flex-1 flex items-center justify-center">
-    <Katex expression={vectorExpression} displayMode={true} />
-  </div> -->
-
   {#each store.answers as answer, i}
-    <div class="flex-1 flex items-center {!isDesktop && 'justify-center'}">
+    <div class="flex-1 flex items-center">
       {#key answer.value}
         <div
-          transition:scale
-          class="w-9 h-9 flex justify-center items-center rounded-2xl bg-slate-500 text-center {isDesktop
-            ? 'ml-[10px]'
-            : 'mx-auto'} absolute transition-all duration-1000 delay-[1500ms]"
-          class:slide-up-1={modified && i === 1}
-          class:slide-up-2={modified && i === 2}
-          class:slide-down={!modified && i > 0}
+          in:myFly|global={{ index: i, duration: 1000, delay: 1400, opacity: 1 }}
+          class="flex
+          {i === store.answers.length - 1 && 'xs:-translate-y-[200px] -translate-y-[100px]'} 
+          {i === store.answers.length - 2 && 'xs:-translate-y-[100px] -translate-y-[50px]'}"
         >
-          {#if modified}
-            <span in:fade={{ delay: 1500 }} out:fade class="absolute right-12">Q.{i + 1}</span>
-          {/if}
-
-          {answer.value}
+          <span in:fade|global={{ delay: 2000 }} out:fade|global class="">
+            <Katex expression={`x_{${i + 1}}`} />
+          </span>
+          <span
+            class="text-gray-50 w-9 h-9 flex justify-center items-center rounded-2xl bg-stone-700 text-center ml-3"
+          >
+            {answer.value}
+          </span>
         </div>
       {/key}
     </div>
   {/each}
 
-  {#if modified}
-    <div in:fade={{ delay: 2000 }} out:fade class="absolute bottom-0">
-      <div class="absolute left-6 bottom-24 font-bold text-3xl">
-        <p>.</p>
-        <p>.</p>
-        <p>.</p>
-        <p>.</p>
-      </div>
-
-      <div
-        class="absolute right-2 bottom-1 w-9 h-9 flex justify-center items-center rounded-2xl bg-slate-500 left-2"
-      >
-        <span class="absolute right-12">Q.75</span>
-        0
-      </div>
+  <div
+    in:fade|global={{ delay: 2000 }}
+    out:fade|global
+    on:introend={() => (drawBorder = true)}
+    class="absolute bottom-12"
+  >
+    <div class="flex absolute left-7 font-bold text-3xl flex-col xs:bottom-20 bottom-16">
+      <p class="h-4 xs:h-10">.</p>
+      <p class="h-4 xs:h-10">.</p>
+      <p class="h-4 xs:h-10">.</p>
     </div>
-  {/if}
+
+    <div class="flex">
+      <span>
+        <Katex expression={"x_{75}"} />
+      </span>
+      <span
+        class="text-gray-50 w-9 h-9 flex justify-center items-center rounded-2xl bg-stone-700 ml-1"
+      >
+        0
+      </span>
+    </div>
+  </div>
 </div>
 
 <style>
-  .slide-up-1 {
+  .translate-100 {
     transform: translateY(-100px);
   }
 
-  .slide-up-2 {
+  .translate-200 {
     transform: translateY(-200px);
-  }
-
-  .slide-down {
-    transform: translateY(0);
-    transition-delay: 0ms;
-  }
-
-  .horizontal {
-    flex-direction: row;
-    width: 250px;
-    height: 4em;
-  }
-
-  .horizontal.vector-border {
-    border-color: red;
   }
 
   .vector-border {
     transition: border-color 400ms;
-    transition-delay: 1500ms;
+    transition-delay: 400ms;
     border: 2px solid transparent;
     position: relative;
   }
 
   .vector-border-color {
-    border-color: red;
+    border-color: #44403c;
   }
 
   .vector-border::before,
@@ -116,7 +97,7 @@
     left: 50%;
     width: 65%; /* Width of the white part */
     height: 3px; /* Same as border width */
-    background-color: white;
+    background-color: #e7e5e4;
     transform: translateX(-50%); /* Center the pseudo-element */
   }
 

@@ -6,8 +6,8 @@ export default {
     extend: {
       screens: {
         xs: "480px",
+        "max-xs": { max: "423px" },
       },
-
       width: {
         50: "49%",
       },

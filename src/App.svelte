@@ -47,11 +47,15 @@
 
   $: cards = questions
 
-  $: myFadeIn = (node, params) => {
-    if (params.bottomBoundary) {
-      return fade(node, { ...params, delay: 100 })
-    } else {
-      return fade(node, { ...params, delay: 1500 })
+  const myFadeIn = (node, params) => {
+    if (params.index === 0) {
+      return fade(node, { delay: 1000 })
+    }
+    if (params.index === 1) {
+      return fly(node, { delay: 2000 + params.index * 200, x: -100, duration: 1000 })
+    }
+    if (params.index === 2) {
+      return fly(node, { delay: 2000 + params.index * 200, x: -100, duration: 1000 })
     }
   }
 
@@ -65,32 +69,34 @@
     isSmallMobile = xs.matches
   }
 
-  function switchVisualisation() {
-    showAnswerVector = !showAnswerVector
-  }
-
   checkScreenSize()
   window.addEventListener("resize", checkScreenSize)
   const math = "c = \\pm\\sqrt{a^2 + b^2}"
 </script>
 
 <!-- class="min-w-[1024px]" -->
-<main>
+<main class="bg-stone-200">
   <!-- <Hero /> -->
   <Intro />
-  <Katex expression={math} displayMode />
+  <!-- <Katex expression={math} displayMode /> -->
 
   <Scroller {top} {bottom} {threshold} {isDesktop} bind:index bind:offset bind:progress>
     <div slot="background">
-      {#if showAnswerVector || vectorStep}
-        <div transition:fade={{ delay: 400 }}>
-          <Vector store={$selectedCandidates[0]} modified={vectorStep} {isDesktop} />
-        </div>
-      {:else if questionStep}
-        <div transition:fade={{ delay: 400 }}>
+      {#if questionStep}
+        <div transition:fade={{ delay: 400 }} class="w-full absolute">
           <SmartMap {isDesktop} {isTablet} {isSmallMobile} />
         </div>
       {/if}
+
+      <div class="w-full absolute flex gap-12 xs:gap-24 justify-center">
+        {#if vectorStep}
+          {#each $selectedCandidates as candidate, i}
+            <div in:myFadeIn|global={{ index: i }} out:fade|global>
+              <Vector store={candidate} />
+            </div>
+          {/each}
+        {/if}
+      </div>
 
       <!-- {#if vectorStep}
         <div class="flex">
@@ -169,27 +175,25 @@
 
     <div slot="foreground">
       <!-- min-h-[1000px] -->
-      <section class="flex justify-start">
-        <div class="border border-solid border-black">
+      <section class="flex">
+        <div class="border border-solid border-black bg-stone-50 opacity-90 max-w-2xl p-4">
           <p class="flex">
             First a candidate will be asked to fill a questionnaire with some political questions.
             Try selecting different answers for candidate X and see how the coordinates change.
             Also, notice that for each answer there is a corresponding numerical value.
           </p>
-          <div class="flex flex-wrap gap-2 lg:flex-nowrap lg:flex-col">
+          <div class="flex flex-wrap gap-2 md:flex-nowrap md:flex-col">
             {#each cards as question, i}
               <Question number={i + 1} {question} />
             {/each}
           </div>
-
-          <button on:click={switchVisualisation}> Show Answer Vector </button>
 
           <!-- <SmartMap /> -->
         </div>
       </section>
 
       <section class="flex">
-        <div class="border border-solid border-black">
+        <div class="border border-solid border-black bg-stone-50 opacity-90 max-w-2xl p-4">
           <p>
             In reality the candidate answers 75 questions and the answers are stored as a vector.
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Esse nemo amet soluta ipsum
@@ -199,7 +203,7 @@
       </section>
 
       <section class="flex">
-        <div class="border border-solid border-black">
+        <div class="border border-solid border-black bg-stone-50 opacity-90 max-w-2xl p-4">
           <p>
             ... Also there should be more than 1 candidate. Lorem ipsum dolor sit amet consectetur
             adipisicing elit. Aperiam sapiente possimus consequuntur aliquam id dicta illo nulla
@@ -250,7 +254,7 @@
 
   section {
     border: 1px solid black;
-    height: 100vh;
+    height: 1000px;
     padding: 1em;
     margin-bottom: 2em;
     justify-content: center;

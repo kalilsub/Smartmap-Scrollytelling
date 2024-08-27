@@ -10,15 +10,13 @@
   export let isTablet
   export let isSmallMobile
 
-  $: console.log(isSmallMobile)
-
   const margin = isSmallMobile
     ? { top: 20, bottom: 10, left: 20, right: 10 }
     : { top: 30, bottom: 20, left: 30, right: 20 }
 
   const centering = isSmallMobile ? 5 : 10
 
-  $: svgHeight = isTablet ? "height: 570px;" : "height: calc(100vw * 0.75);"
+  $: svgHeight = isTablet ? "height: 530px;" : "height: calc(100vw * 0.75);"
 
   $: innerWidth = width - margin.left - margin.right
   $: innerHeight = height - margin.top - margin.bottom

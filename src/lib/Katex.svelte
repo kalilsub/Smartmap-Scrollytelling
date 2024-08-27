@@ -25,10 +25,4 @@
   }
 </script>
 
-<div bind:this={renderedMath}></div>
-
-<style>
-  div {
-    font-size: 1.5em;
-  }
-</style>
+<div bind:this={renderedMath} class="xs:text-xl"></div>
