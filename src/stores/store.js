@@ -1,51 +1,53 @@
-import { writable, derived } from "svelte/store"
 import { tweened } from "svelte/motion"
+import { Vector3 } from "three"
 
-// @ts-ignore
-import data from "../data/combined.csv"
-import { data as initialCoordinates } from "../data/candidateCoordinates"
-import { processData, getDistances, calculateDistance } from "../utils/helpers"
+import {
+  residuals,
+  coordinates,
+  initialGrid,
+  initialAxisDimensions,
+  initialAxisLabels,
+  initialDomain,
+  initialCameraPosition,
+  initialLabelRotation,
+  initialAxisArrowRotation,
+  initialDeviation,
+  standardisedResidualsAdjusted,
+} from "../data/data"
+import { cubicInOut } from "svelte/easing"
 
-export const csvData = tweened(processData(data))
-export const selectedCandidates = writable([
+export const smartmapData = tweened(coordinates, { duration: 1000, easing: cubicInOut })
+export const projectedData = tweened(
+  standardisedResidualsAdjusted.map((point) => ({
+    ...point,
+    position: new Vector3(point.x, point.y, point.z),
+  })),
+)
+
+export const newCandidate = tweened(
   {
-    id: 1910,
+    id: 0,
+    x: 0,
+    y: 0,
     answers: [
-      { value: 1, isSelected: false },
-      { value: 1, isSelected: false },
-      { value: 0.25, isSelected: false },
+      { id: 32214, value: -1 },
+      { id: 32215, value: -1 },
+      { id: 32268, value: -1 },
     ],
   },
-  {
-    id: 2,
-    answers: [
-      { value: 0.5, isSelected: false },
-      { value: 0.75, isSelected: false },
-      { value: 0.25, isSelected: false },
-    ],
-  },
+  { duration: 1000, easing: cubicInOut },
+)
 
-  {
-    id: 3,
-    answers: [
-      { value: 0, isSelected: false },
-      { value: 0.25, isSelected: false },
-      { value: 1, isSelected: false },
-    ],
-  },
-])
+// 3D related stores
+export const pc1 = tweened({ x: [1], y: [1], z: [1] })
+export const pc2 = tweened({ x: [1], y: [1], z: [1] })
 
-export const vectorDistances = derived(selectedCandidates, ($selectedCandidates) => {
-  return getDistances($selectedCandidates)
-})
+export const cameraPosition = tweened(initialCameraPosition, { duration: 1000, easing: cubicInOut })
+export const gridProperties = tweened(initialGrid)
+export const domain = tweened(initialDomain)
 
-export const candidatePoints = tweened([...initialCoordinates])
-
-export const candidateDistances = derived(candidatePoints, ($candidatePoints) => {
-  const [p1, p2, p3] = $candidatePoints
-  return [
-    { pair: [p1, p2], distance: +calculateDistance(p1, p2) },
-    { pair: [p1, p3], distance: +calculateDistance(p1, p3) },
-    { pair: [p2, p3], distance: +calculateDistance(p2, p3) },
-  ]
-})
+export const axisDimensions = tweened(initialAxisDimensions)
+export const axisLabels = tweened(initialAxisLabels)
+export const labelRotation = tweened(initialLabelRotation)
+export const axisArrowRotation = tweened(initialAxisArrowRotation)
+export const deviation = tweened(initialDeviation)
